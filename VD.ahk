@@ -436,6 +436,12 @@ class VD {
         ;----------------------
 
         this.savedLocalizedWord_Desktop:=false
+
+        ;----------------------
+        OnMessage(DllCall("RegisterWindowMessageW","WStr","TaskbarCreated","Uint"), VD._ExplorerRestarted)
+    }
+    _ExplorerRestarted(lParam, msg, hwnd) {
+        VD._init()
     }
     ;dll methods start
     _dll_MoveViewToDesktop_normal(IApplicationView,IVirtualDesktop) {

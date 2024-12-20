@@ -515,13 +515,17 @@ class VD {
     }
 
     goToDesktopNum(desktopNum) { ; Lej77 https://github.com/Grabacr07/VirtualDesktop/pull/23#issuecomment-334918711
-        firstWindowId:=this._getFirstWindowInVD(desktopNum)
-        if (!firstWindowId) {
-            firstWindowId:=WinExist("ahk_class Progman ahk_exe explorer.exe")
+        if (this._shouldActivateUponArrival()) {
+            firstWindowId:=this._getFirstWindowInVD(desktopNum)
+            if (!firstWindowId) {
+                firstWindowId:=WinExist("ahk_class Progman ahk_exe explorer.exe")
+            }
+        } else {
+            firstWindowId:=0
         }
         IVirtualDesktop := this._GetDesktops_Obj().GetAt(desktopNum)
 
-        if (VD.animation_on) {
+        if (VD.animation_on && firstWindowId) {
             if (this.idx_SwitchDesktopWithAnimation > -1) {
                 DllCall(this.ptr_SwitchDesktopWithAnimation,"Ptr",this.IVirtualDesktopManagerInternal,"Ptr",IVirtualDesktop)
                 this._waitForCurrentDesktopArrived(desktopNum,firstWindowId)
@@ -545,6 +549,13 @@ class VD {
             this._waitForCurrentDesktopArrived(desktopNum,firstWindowId)
         }
 
+    }
+
+    _shouldActivateUponArrival() { ;override this to change behavior
+        if (WinActive("Task View ahk_exe explorer.exe")) {
+            return false
+        }
+        return true
     }
 
     _waitForCurrentDesktopArrived(desktopNum,firstWindowId) {

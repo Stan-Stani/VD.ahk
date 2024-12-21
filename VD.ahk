@@ -435,7 +435,8 @@ class VD {
 
         ;----------------------
 
-        this.savedLocalizedWord_Desktop:=false
+        this.savedLocalizedWord_TaskView:=false
+        this.savedLocalizedWord_Desktop := false
 
         ;----------------------
         OnMessage(DllCall("RegisterWindowMessageW","WStr","TaskbarCreated","Uint"), VD._ExplorerRestarted)
@@ -552,7 +553,7 @@ class VD {
     }
 
     _shouldActivateUponArrival() { ;override this to change behavior
-        if (WinActive("Task View ahk_exe explorer.exe")) {
+        if (WinActive(this._getLocalizedWord_TaskView() " ahk_exe explorer.exe")) {
             return false
         }
         return true
@@ -568,6 +569,16 @@ class VD {
         }
     }
 
+    _getLocalizedWord_TaskView() {
+        if (this.savedLocalizedWord_TaskView) {
+            return this.savedLocalizedWord_TaskView
+        }
+
+        hModule := (hModule:=DllCall("GetModuleHandle", "Str","twinui.pcshell.dll", "Ptr")) ? hModule : DllCall("LoadLibrary", "Str","twinui.pcshell.dll", "Ptr")
+        length:=DllCall("LoadString", "Uint",hModule, "Uint",1512, "Ptr*",lpBuffer, "Int",0) ;1512="Task View"
+        this.savedLocalizedWord_TaskView := StrGet(lpBuffer, length, "UTF-16")
+        return this.savedLocalizedWord_TaskView
+    }
     _getLocalizedWord_Desktop() {
         if (this.savedLocalizedWord_Desktop) {
             return this.savedLocalizedWord_Desktop

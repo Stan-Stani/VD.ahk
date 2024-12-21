@@ -510,8 +510,8 @@ class VD {
         return this._GetDesktops_Obj().GetCount()
     }
 
-    goToDesktopNum(desktopNum) { ; Lej77 https://github.com/Grabacr07/VirtualDesktop/pull/23#issuecomment-334918711
-        if (this._shouldActivateUponArrival()) {
+    goToDesktopNum(desktopNum, shouldActivateUponArrival:=true) { ; Lej77 https://github.com/Grabacr07/VirtualDesktop/pull/23#issuecomment-334918711
+        if (shouldActivateUponArrival && this._shouldActivateUponArrival()) {
             firstWindowId:=this._getFirstWindowInVD(desktopNum)
             if (!firstWindowId) {
                 firstWindowId:=WinExist("ahk_class Progman ahk_exe explorer.exe")
@@ -656,7 +656,7 @@ class VD {
         thePView:=found[2]
 
         desktopNum_ofWindow:=this._desktopNum_from_pView(thePView)
-        this.goToDesktopNum(desktopNum_ofWindow)
+        this.goToDesktopNum(desktopNum_ofWindow, !activateYourWindow)
 
         if (activateYourWindow) {
             WinActivate, ahk_id %theHwnd%
@@ -701,7 +701,7 @@ class VD {
             this.desktopNum:=desktopNum
         }
         follow() {
-            VD.goToDesktopNum(this.desktopNum)
+            VD.goToDesktopNum(this.desktopNum, false)
             WinActivate % "ahk_id " this.hwnd
         }
     }

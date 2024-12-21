@@ -1221,14 +1221,15 @@ class VD {
     ;utility methods start
 
     _isValidWindow(hWnd,checkUpper:=true) { ;returns [0,pView,hWnd] if succeeded
+        static GetWindowLong_Name := (A_PtrSize==8) ? "GetWindowLongPtrW" : "GetWindowLongW"
         returnValue:=[1,0,0]
         breakToReturnFalse:
         loop 1 {
-            dwStyle:=DllCall("GetWindowLongPtrW","Ptr",hWnd,"Int",-16,"Ptr")
+            dwStyle:=DllCall(GetWindowLong_Name,"Ptr",hWnd,"Int",-16,"Ptr")
             if (!(dwStyle & 0x10000000)) { ;0x10000000=WS_VISIBLE
                 break breakToReturnFalse
             }
-            dwExStyle:=DllCall("GetWindowLongPtrW","Ptr",hWnd,"Int",-20,"Ptr")
+            dwExStyle:=DllCall(GetWindowLong_Name,"Ptr",hWnd,"Int",-20,"Ptr")
             if (!(dwExStyle&0x00040000)) { ;0x00040000=WS_EX_APPWINDOW
                 if (dwExStyle&0x00000080 || dwExStyle&0x08000000) { ;0x00000080=WS_EX_TOOLWINDOW, 0x08000000=WS_EX_NOACTIVATE
                     break breakToReturnFalse

@@ -692,6 +692,18 @@ class VD {
             this.SetForegroundWindow(firstWindowId)
         }
 
+        return new this.WindowInfo(theHwnd, desktopNum)
+    }
+
+    class WindowInfo {
+        __New(hwnd, desktopNum) {
+            this.hwnd:=hwnd
+            this.desktopNum:=desktopNum
+        }
+        follow() {
+            VD.goToDesktopNum(this.desktopNum)
+            WinActivate % "ahk_id " this.hwnd
+        }
     }
 
     getRelativeDesktopNum(anchor_desktopNum, relative_count) {
@@ -716,9 +728,7 @@ class VD {
         desktopNum_ofWindow := this.getDesktopNumOfWindow(wintitle)
         absolute_desktopNum := this.getRelativeDesktopNum(desktopNum_ofWindow, relative_count)
 
-        this.MoveWindowToDesktopNum(wintitle, absolute_desktopNum)
-
-        return absolute_desktopNum
+        return this.MoveWindowToDesktopNum(wintitle, absolute_desktopNum)
     }
 
     gotoRelativeDesktopNum(relative_count) {

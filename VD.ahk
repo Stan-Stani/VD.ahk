@@ -434,11 +434,6 @@ class VD {
         DllCall("ole32\CLSIDFromString","Str",IID_IVirtualDesktop_str,"Ptr",this.IID_IVirtualDesktop_ptr)
 
         ;----------------------
-
-        this.savedLocalizedWord_TaskView:=false
-        this.savedLocalizedWord_Desktop := false
-
-        ;----------------------
         OnMessage(DllCall("RegisterWindowMessageW","WStr","TaskbarCreated","Uint"), VD._ExplorerRestarted)
     }
     _ExplorerRestarted(lParam, msg, hwnd) {
@@ -569,25 +564,26 @@ class VD {
         }
     }
 
-    _getLocalizedWord_TaskView() {
-        if (this.savedLocalizedWord_TaskView) {
-            return this.savedLocalizedWord_TaskView
-        }
-
+    _onceLocalizedWord_TaskView() {
         hModule := (hModule:=DllCall("GetModuleHandle", "Str","twinui.pcshell.dll", "Ptr")) ? hModule : DllCall("LoadLibrary", "Str","twinui.pcshell.dll", "Ptr")
         length:=DllCall("LoadString", "Uint",hModule, "Uint",1512, "Ptr*",lpBuffer, "Int",0) ;1512="Task View"
-        this.savedLocalizedWord_TaskView := StrGet(lpBuffer, length, "UTF-16")
-        return this.savedLocalizedWord_TaskView
+        savedLocalizedWord_TaskView := StrGet(lpBuffer, length, "UTF-16")
+        return savedLocalizedWord_TaskView
     }
-    _getLocalizedWord_Desktop() {
-        if (this.savedLocalizedWord_Desktop) {
-            return this.savedLocalizedWord_Desktop
-        }
-
+    _onceLocalizedWord_Desktop() {
         hModule := DllCall("GetModuleHandle", "Str","shell32.dll", "Ptr") ;ahk always loads "shell32.dll"
         length:=DllCall("LoadString", "Uint",hModule, "Uint",21769, "Ptr*",lpBuffer, "Int",0) ;21769="Desktop"
-        this.savedLocalizedWord_Desktop := StrGet(lpBuffer, length, "UTF-16")
-        return this.savedLocalizedWord_Desktop
+        savedLocalizedWord_Desktop := StrGet(lpBuffer, length, "UTF-16")
+        return savedLocalizedWord_Desktop
+    }
+
+    _getLocalizedWord_TaskView() {
+        static savedLocalizedWord_TaskView := VD._onceLocalizedWord_TaskView()
+        return savedLocalizedWord_TaskView
+    }
+    _getLocalizedWord_Desktop() {
+        static savedLocalizedWord_Desktop := VD._onceLocalizedWord_Desktop()
+        return savedLocalizedWord_Desktop
     }
     getNameFromDesktopNum(desktopNum) {
         desktopName:=""

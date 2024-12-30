@@ -32,10 +32,10 @@ SetControlDelay -1
 
 
 ;just move window
-~MButton & 1:: VD.MoveWindowToDesktopNum("A", 1)
-~MButton & 2:: VD.MoveWindowToDesktopNum("A", 2)
-~MButton & 3:: VD.MoveWindowToDesktopNum("A", 3)
-~MButton & 4:: VD.MoveWindowToDesktopNum("A", 4)
+^#!j:: VD.MoveWindowToDesktopNum("A", 1)
+^#!k:: VD.MoveWindowToDesktopNum("A", 2)
+^#!l:: VD.MoveWindowToDesktopNum("A", 3)
+^#!;:: VD.MoveWindowToDesktopNum("A", 4)
 
 ; wrapping / cycle back to first desktop when at the last
 ^#Numpad1:: VD.goToRelativeDesktopNum(-1)
